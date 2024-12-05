@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:BluetoothAttendanceSystem.ViewModels"
+             xmlns:models="clr-namespace:BluetoothAttendanceSystem.Models"
+             xmlns:converters="clr-namespace:BluetoothAttendanceSystem.Converters"
+             x:Class="BluetoothAttendanceSystem.Pages.BlatsyHomePage"
+             BackgroundColor="#F1F1F1"
+             Title="Blatsy Home Page">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:FirstLetterConverter x:Key="FirstLetterConverter" />
+            <converters:FullClassNameConverter x:Key="FullClassNameConverter" />
+            <converters:NegationConverter x:Key="NegationConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding LoadClassCommand}">
+            <VerticalStackLayout Grid.Row="1">
+                <Frame Margin="10,10">
+                    <VerticalStackLayout>
+                        <Label Text="Reminder:"
+                               VerticalOptions="Start"
+                               HorizontalOptions="Start"
+                               FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                               FontAttributes="Bold"
+                               SemanticProperties.Description="Reminder" />
+                        <Label Text="Once you select Student List for the First Time a prompt dialog will appear. Just select 'Allow While Using the APP'. This is a must for Bluetooth Scan to work. If the app prompts you to Turn On Bluetooth First turn it on right away before tapping the Attendance Button because there is an odd effect that the scan will not stop. If it happens just tap the back button in the Top Left portion of the app and run the Attendance again. Lastly, if you recently added a class and don't appear on the list here immediately just Pull Down the List to refresh. Enjoy using BLATSY!"
+                               VerticalOptions="Start"
+                               HorizontalOptions="Start"
+                               FontSize="{OnPlatform WinUI=Small, Android=Small }"
+                               FontAttributes="None"
+                               SemanticProperties.Description="Reminder on how to use the application properly." />
+                    </VerticalStackLayout>
+                </Frame>
+                <CollectionView x:Name="collectionView"
+                                SelectionMode="Single"
+                                SelectedItem="{Binding SelectedClass, Mode=TwoWay}"
+                                ItemsSource="{Binding Students}"
+                                EmptyView="The Class List is Empty"
+                                Margin="10,0,10,5">
+                    <CollectionView.Header>
+                        <VerticalStackLayout Background="#3b82f6"
+                                             Padding="5"
+                                             Margin="0,0,0,5">
+                            <Label Text="CLASS LIST"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"
+                                   FontSize="Medium"
+                                   FontAttributes="Bold" />
+                        </VerticalStackLayout>
+                    </CollectionView.Header>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:StudentSubjectModel">
+                            <Border StrokeShape="RoundRectangle 5"
+                                    StrokeThickness="1"
+                                    Stroke="LightGray"
+                                    Padding="5"
+                                    Margin="0,0,0,5">
+                                <Grid ColumnDefinitions=".2*, .8*">
+                                    <Frame Grid.Column="0"
+                                           Grid.Row="0"
+                                           BackgroundColor="#3b82f6"
+                                           CornerRadius="25"
+                                           HeightRequest="50"
+                                           WidthRequest="50"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center">
+                                    </Frame>
+                                    <Label Text="{Binding CourseAbbreviation, Converter={StaticResource FirstLetterConverter}}"
+                                           FontAttributes="Bold"
+                                           FontSize="Large"
+                                           TextColor="Black"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalTextAlignment="Center" />
+                                    <VerticalStackLayout Grid.Column="1">
+                                        <Label FontSize="Medium">
+                                            <Label.Text>
+                                                <MultiBinding Converter="{StaticResource FullClassNameConverter}">
+                                                    <Binding Path="CourseAbbreviation" />
+                                                    <Binding Path="Year" />
+                                                    <Binding Path="Section" />
+                                                </MultiBinding>
+                                            </Label.Text>
+                                        </Label>
+                                        <Label Text="{Binding Subject}"
+                                               FontSize="Small" />
+                                        <Label Text="{Binding SubjectCode}"
+                                               FontSize="Small" />
+                                        <Label Text="{Binding FullCourseName}"
+                                               FontSize="Small" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </RefreshView>
+    </Grid>
+
+</ContentPage>

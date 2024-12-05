@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:BluetoothAttendanceSystem.ViewModels"
+             xmlns:models="clr-namespace:BluetoothAttendanceSystem.Models"
+             xmlns:triggers="clr-namespace:BluetoothAttendanceSystem.Triggers"
+             xmlns:converters="clr-namespace:BluetoothAttendanceSystem.Converters"
+             x:Class="BluetoothAttendanceSystem.Pages.ViewClassPage"
+             x:DataType="viewmodels:ViewClassPageViewModel"
+             BackgroundColor="#F1F1F1"
+             Title="View Class">
+
+    <ContentPage.Resources>
+        <Style x:Key="InvalidEntryStyle"
+               TargetType="Entry">
+            <Setter Property="BackgroundColor"
+                    Value="LightPink" />
+        </Style>
+        <Style x:Key="ValidEntryStyle"
+               TargetType="Entry">
+            <Setter Property="TextColor"
+                    Value="Black" />
+        </Style>
+        <Style x:Key="InvalidPickerStyle"
+               TargetType="Picker">
+            <Setter Property="BackgroundColor"
+                    Value="LightPink" />
+        </Style>
+        <Style x:Key="ValidPickerStyle"
+               TargetType="Picker">
+            <Setter Property="TextColor"
+                    Value="Black" />
+        </Style>
+        <ResourceDictionary>
+            <converters:FirstLetterConverter x:Key="FirstLetterConverter" />
+            <converters:FullClassNameConverter x:Key="FullClassNameConverter" />
+            <converters:NegationConverter x:Key="NegationConverter" />
+            <converters:FullStudentNameConverter x:Key="FullStudentNameConverter" />
+            <converters:GenderBackgroundColorConverter x:Key="GenderBackgroundColorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <Grid>
+            <VerticalStackLayout>
+                <Frame Margin="10,10,10,0">
+                    <VerticalStackLayout>
+                        <Label Text="Reminder:"
+                               VerticalOptions="Start"
+                               HorizontalOptions="Start"
+                               FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                               FontAttributes="Bold"
+                               SemanticProperties.Description="Reminder" />
+                        <Label Text="This Page is for Updating the Student Information. Tap Add New Student it will bring a modal where you can add student to current class and subject. In student list you can Swipe Left to EDIT and DELETE student information. Enjoy using Blatsy."
+                               HorizontalOptions="Start"
+                               FontSize="{OnPlatform WinUI=Small, Android=Small }"
+                               FontAttributes="None"
+                               SemanticProperties.Description="Reminder on how to use the application properly." />
+                    </VerticalStackLayout>
+                </Frame>
+                <!-- Add New Student -->
+                <Frame Margin="10,5,10,5">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding IsAddingStudentIsActiveCommand}" />
+                    </Frame.GestureRecognizers>
+                    <Grid ColumnDefinitions=".2*,.8*">
+                        <Image Source="add_new_student.png"
+                               Grid.Column="0"
+                               HeightRequest="50"
+                               WidthRequest="50" />
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Add New Student"
+                                   VerticalOptions="Start"
+                                   HorizontalOptions="Start"
+                                   FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                                   FontAttributes="Bold" />
+                            <Label Text="Tap this section to add new student manually."
+                                   VerticalOptions="Start"
+                                   HorizontalOptions="Start"
+                                   FontSize="{OnPlatform WinUI=Micro, Android=Small}"
+                                   FontAttributes="None" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Frame>
+                <Frame Margin="10,0,10,5">
+                    <Grid ColumnDefinitions=".5*,.5*">
+                        <StackLayout Grid.Column="0">
+                            <Label Text="Subject:"
+                                   VerticalOptions="Start"
+                                   HorizontalOptions="Start"
+                                   FontSize="{OnPlatform WinUI=Small, Android=Small }"
+                                   FontAttributes="Bold" />
+
+                            <Label Text="{Binding Subject}"
+                                   VerticalOptions="Start"
+                                   HorizontalOptions="Start"
+                                   FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                                   FontAttributes="Bold" />
+
+                            <Label Text="{Binding SubjectCode}"
+                                   VerticalOptions="Start"
+                                   HorizontalOptions="Start"
+                                   FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                                   FontAttributes="Bold" />
+                        </StackLayout>
+                        <StackLayout Grid.Column="1">
+                            <VerticalStackLayout>
+                                <HorizontalStackLayout>
+                                    <Label Text="Total Males: "
+                                           VerticalOptions="Start"
+                                           HorizontalOptions="Start"
+                                           FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                                           FontAttributes="None" />
+                                    <Label Text="{Binding TotalMales}"
+                                           VerticalOptions="Start"
+                                           HorizontalOptions="Start"
+                                           FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                                           FontAttributes="Bold" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout>
+                                    <Label Text="Total Females: "
+                                           VerticalOptions="Start"
+                                           HorizontalOptions="Start"
+                                           FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                                           FontAttributes="None" />
+                                    <Label Text="{Binding TotalFemales}"
+                                           VerticalOptions="Start"
+                                           HorizontalOptions="Start"
+                                           FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                                           FontAttributes="Bold" />
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </StackLayout>
+                    </Grid>
+                </Frame>
+                <CollectionView  SelectionMode="None"
+                                 Margin="10,5,10,0"
+                                 ItemsSource="{Binding Students}"
+                                 EmptyView="The Student List is Empty">
+                    <CollectionView.Header>
+                        <VerticalStackLayout Background="#3b82f6"
+                                             Padding="5"
+                                             Margin="0,0,0,5">
+                            <Label Text="Student List"
+                                   HorizontalOptions="Center"
+                                   FontSize="Medium"
+                                   FontAttributes="Bold" />
+                        </VerticalStackLayout>
+                    </CollectionView.Header>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Student">
+                            <SwipeView>
+                                <SwipeView.RightItems>
+                                    <SwipeItems>
+                                        <SwipeItem Text="Delete"
+                                                   BackgroundColor="Red"
+                                                   Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ViewClassPageViewModel}}, Path=DeleteStudentCommand}"
+                                                   CommandParameter="{Binding StudentId}">
+                                        </SwipeItem>
+                                        <SwipeItem Text="Edit"
+                                                   BackgroundColor="#3b82f6"
+                                                   Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ViewClassPageViewModel}}, Path=EditStudentCommand}"
+                                                   CommandParameter="{Binding StudentId}">
+                                        </SwipeItem>
+                                    </SwipeItems>
+                                </SwipeView.RightItems>
+                                <Border StrokeShape="RoundRectangle 5"
+                                        StrokeThickness="1"
+                                        Stroke="LightGray"
+                                        Padding="5"
+                                        Margin="0,0,0,5">
+                                    <Grid ColumnDefinitions=".2*, .8*">
+                                        <Frame Grid.Column="0"
+                                               Grid.Row="0"
+                                               BackgroundColor="{Binding Gender, Converter={StaticResource GenderBackgroundColorConverter}}"
+                                               CornerRadius="25"
+                                               HeightRequest="50"
+                                               WidthRequest="50"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="Center">
+                                        </Frame>
+                                        <Label Text="{Binding Surname, Converter={StaticResource FirstLetterConverter}}"
+                                               FontAttributes="Bold"
+                                               FontSize="Large"
+                                               TextColor="Black"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center" />
+                                        <VerticalStackLayout Grid.Column="1">
+                                            <Label FontSize="Medium">
+                                                <Label.Text>
+                                                    <MultiBinding Converter="{StaticResource FullStudentNameConverter}">
+                                                        <Binding Path="Surname" />
+                                                        <Binding Path="Firstname" />
+                                                        <Binding Path="Middlename" />
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+                                            <Label FontSize="Small">
+                                                <Label.Text>
+                                                    <MultiBinding Converter="{StaticResource FullClassNameConverter}">
+                                                        <Binding Path="CourseAbbreviation" />
+                                                        <Binding Path="Year" />
+                                                        <Binding Path="Section" />
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+                                            <Label Text="{Binding FullCourseName}"
+                                                   FontSize="Small" />
+                                            <Label Text="{Binding BluetoothMACAddress}"
+                                                   FontSize="Small" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </SwipeView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+
+
+            <!-- Add New / Edit Student Overlay Overlay -->
+            <BoxView BackgroundColor="Black"
+                     Opacity=".5"
+                     IsVisible="{Binding IsAddingStudent}">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding IsAddingStudentIsInactiveCommand}" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+
+            <Border IsVisible="False"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Start"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=Gray}"
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="1"
+                    Stroke="Black"
+                    WidthRequest="350"
+                    Padding="10">
+                <Border.Shadow>
+                    <Shadow Brush="LightSlateGray"
+                            Offset="5,3"
+                            Opacity=".5" />
+                </Border.Shadow>
+                <Border.Triggers>
+                    <DataTrigger TargetType="Border"
+                                 Binding="{Binding IsAddingStudent}"
+                                 Value="True">
+                        <DataTrigger.EnterActions>
+                            <triggers:ShowOverlayTriggerAction ShowOverlay="True" />
+                        </DataTrigger.EnterActions>
+                        <DataTrigger.ExitActions>
+                            <triggers:ShowOverlayTriggerAction ShowOverlay="False" />
+                        </DataTrigger.ExitActions>
+                        <Setter Property="IsVisible"
+                                Value="True" />
+                    </DataTrigger>
+                </Border.Triggers>
+                <VerticalStackLayout>
+                    <Label Text="{Binding IsAddingOrEditingStudent}"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           Margin="0,0,0,20"
+                           HorizontalOptions="Center" />
+                    <Label Text="Firstname*"
+                           x:Name="EnterFirstName"
+                           FontAttributes="Bold" />
+                    <Entry Text="{Binding Firstname}"
+                           Placeholder="Sammy"
+                           PlaceholderColor="Gray"
+                           SemanticProperties.Description="{Binding Text, Source={x:Reference EnterFirstName}}"
+                           SemanticProperties.Hint="Provides a text that will be used to identify your Firstname. This is a required field.">
+                        <Entry.Behaviors>
+                            <toolkit:TextValidationBehavior x:Name="firstNameValidator"
+                                                            InvalidStyle="{StaticResource InvalidEntryStyle}"
+                                                            ValidStyle="{StaticResource ValidEntryStyle}"
+                                                            Flags="ValidateOnAttaching,ValidateOnValueChanged"
+                                                            MinimumLength="2" />
+                        </Entry.Behaviors>
+                    </Entry>
+                    <Label Text="Middlename"
+                           x:Name="EnterMiddleName"
+                           FontAttributes="Bold" />
+                    <Entry Text="{Binding Middlename}"
+                           Placeholder="Optional"
+                           PlaceholderColor="Gray"
+                           SemanticProperties.Description="{Binding Text, Source={x:Reference EnterMiddleName}}"
+                           SemanticProperties.Hint="Provides a text that will be used to identify your Middlename. This is an optional field." />
+                    <Label Text="Surname*"
+                           x:Name="EnterSurname"
+                           FontAttributes="Bold" />
+                    <Entry Text="{Binding Surname}"
+                           Placeholder="Odi"
+                           PlaceholderColor="Gray"
+                           SemanticProperties.Description="{Binding Text, Source={x:Reference EnterSurname}}"
+                           SemanticProperties.Hint="Provides a text that will be used to identify your Surname. This is a required field.">
+                        <Entry.Behaviors>
+                            <toolkit:TextValidationBehavior x:Name="lastNameValidator"
+                                                            InvalidStyle="{StaticResource InvalidEntryStyle}"
+                                                            ValidStyle="{StaticResource ValidEntryStyle}"
+                                                            Flags="ValidateOnAttaching,ValidateOnValueChanged"
+                                                            MinimumLength="2" />
+                        </Entry.Behaviors>
+                    </Entry>
+                    <Label Text="Bluetooth MAC Address*"
+                           x:Name="EnterBluetoothMacAddress"
+                           FontAttributes="Bold" />
+                    <Entry Text="{Binding BluetoothMacAddress}"
+                           Placeholder="00:11:22:33:FF:EE"
+                           PlaceholderColor="Gray"
+                           SemanticProperties.Description="{Binding Text, Source={x:Reference EnterBluetoothMacAddress}}"
+                           SemanticProperties.Hint="Provides a text that will be used to identify your Surname. This is a required field.">
+                        <Entry.Behaviors>
+                            <toolkit:TextValidationBehavior x:Name="BluetoothNameValidator"
+                                                            InvalidStyle="{StaticResource InvalidEntryStyle}"
+                                                            ValidStyle="{StaticResource ValidEntryStyle}"
+                                                            Flags="ValidateOnAttaching,ValidateOnValueChanged"
+                                                            MinimumLength="2" />
+                        </Entry.Behaviors>
+                    </Entry>
+                    <Label Text="Gender*"
+                           x:Name="EnterGender"
+                           FontAttributes="Bold" />
+
+                    <Picker ItemsSource="{Binding GenderOptions}"
+                            SelectedItem="{Binding Gender, Mode=TwoWay}"
+                            SemanticProperties.Description="{Binding Text, Source={x:Reference EnterGender}}"
+                            SemanticProperties.Hint="Provides a selection item that will be used to identify your Gender. This is a required field.">
+                        <Picker.Behaviors>
+                            <toolkit:RequiredStringValidationBehavior x:Name="GenderValidator"
+                                                                      InvalidStyle="{StaticResource InvalidPickerStyle}"
+                                                                      ValidStyle="{StaticResource ValidPickerStyle}" />
+                        </Picker.Behaviors>
+                    </Picker>
+                    <Label Text="Full Course Name or Grade Level*"
+                           x:Name="EnterFullCourseName"
+                           FontAttributes="Bold">
+                    </Label>
+                    <Entry Text="{Binding FullCourseName}"
+                           Placeholder="Bachelor of Science in Information System or Grade 1"
+                           PlaceholderColor="Gray"
+                           SemanticProperties.Description="{Binding Text, Source={x:Reference EnterFullCourseName}}"
+                           SemanticProperties.Hint="Provides a text that will be used to identify full course name. This is a required field.">
+                        <Entry.Behaviors>
+                            <toolkit:TextValidationBehavior InvalidStyle="{StaticResource InvalidEntryStyle}"
+                                                                      ValidStyle="{StaticResource ValidEntryStyle}"
+                                                                      Flags="ValidateOnAttaching,ValidateOnValueChanged"
+                                                                      MinimumLength="2" />
+                        </Entry.Behaviors>
+                    </Entry>
+                    <Label Text="Course Abbreviation*"
+                           x:Name="EnterCourseAbbreviation"
+                           FontAttributes="Bold" />
+                    <Entry Text="{Binding CourseAbbreviation}"
+                           Placeholder="BSIS or Grade Level"
+                           PlaceholderColor="Gray"
+                           SemanticProperties.Description="{Binding Text, Source={x:Reference EnterCourseAbbreviation}}"
+                           SemanticProperties.Hint="Provides a text that will be used to identify course abbreviation. This is an required field.">
+                        <Entry.Behaviors>
+                            <toolkit:TextValidationBehavior InvalidStyle="{StaticResource InvalidEntryStyle}"
+                                                            ValidStyle="{StaticResource ValidEntryStyle}"
+                                                            Flags="ValidateOnAttaching,ValidateOnValueChanged"
+                                                            MinimumLength="2" />
+                        </Entry.Behaviors>
+                    </Entry>
+                    <Label Text="Year*"
+                           x:Name="EnterYearOfStudent"
+                           FontAttributes="Bold" />
+                    <Entry Text="{Binding Year}"
+                           Placeholder="1st or Grade Level"
+                           PlaceholderColor="Gray"
+                           SemanticProperties.Description="{Binding Text, Source={x:Reference EnterYearOfStudent}}"
+                           SemanticProperties.Hint="Provides a text that will be used to identify year. This is an required field.">
+                        <Entry.Behaviors>
+                            <toolkit:TextValidationBehavior InvalidStyle="{StaticResource InvalidEntryStyle}"
+                                                            ValidStyle="{StaticResource ValidEntryStyle}"
+                                                            Flags="ValidateOnAttaching,ValidateOnValueChanged"
+                                                            MinimumLength="2" />
+                        </Entry.Behaviors>
+                    </Entry>
+                    <Label Text="Section*"
+                           x:Name="EnterSection"
+                           FontAttributes="Bold" />
+                    <Entry Text="{Binding Section}"
+                           Placeholder="1, A or name of section"
+                           PlaceholderColor="Gray"
+                           SemanticProperties.Description="{Binding Text, Source={x:Reference EnterSection}}"
+                           SemanticProperties.Hint="Provides a text that will be used to identify section. This is a required field.">
+                        <Entry.Behaviors>
+                            <toolkit:TextValidationBehavior InvalidStyle="{StaticResource InvalidEntryStyle}"
+                                                            ValidStyle="{StaticResource ValidEntryStyle}"
+                                                            Flags="ValidateOnAttaching,ValidateOnValueChanged"
+                                                            MinimumLength="1" />
+                        </Entry.Behaviors>
+                    </Entry>
+                    <Label Text="Semester*"
+                           x:Name="EnterSemester"
+                           FontAttributes="Bold" />
+                    <Entry Text="{Binding Semester}"
+                           Placeholder="1st or Grade Level"
+                           PlaceholderColor="Gray"
+                           SemanticProperties.Description="{Binding Text, Source={x:Reference EnterSemester}}"
+                           SemanticProperties.Hint="Provides a text that will be used to identify semester. This is a required field.">
+                        <Entry.Behaviors>
+                            <toolkit:TextValidationBehavior InvalidStyle="{StaticResource InvalidEntryStyle}"
+                                                            ValidStyle="{StaticResource ValidEntryStyle}"
+                                                            Flags="ValidateOnAttaching,ValidateOnValueChanged"
+                                                            MinimumLength="2" />
+                        </Entry.Behaviors>
+                    </Entry>
+                    <Label Text="Email*"
+                           x:Name="EnterEmail"
+                           FontAttributes="Bold" />
+                    <Entry Text="{Binding Email}"
+                           SemanticProperties.Description="{Binding Text, Source={x:Reference EnterEmail}}"
+                           SemanticProperties.Hint="Provides a text that will be used to identify your Email. This is a required field.">
+                        <Entry.Behaviors>
+                            <toolkit:MultiValidationBehavior Flags="ValidateOnAttaching,ValidateOnValueChanged">
+                                <toolkit:EmailValidationBehavior InvalidStyle="{StaticResource InvalidEntryStyle}"
+                                                                 ValidStyle="{StaticResource ValidEntryStyle}"
+                                                                 Flags="ValidateOnAttaching,ValidateOnValueChanged"
+                                                                 toolkit:MultiValidationBehavior.Error="Email is invalid." />
+                                <toolkit:TextValidationBehavior InvalidStyle="{StaticResource InvalidEntryStyle}"
+                                                                ValidStyle="{StaticResource ValidEntryStyle}"
+                                                                Flags="ValidateOnAttaching,ValidateOnValueChanged"
+                                                                MinimumLength="2"
+                                                                toolkit:MultiValidationBehavior.Error="Email is required" />
+                            </toolkit:MultiValidationBehavior>
+                        </Entry.Behaviors>
+                    </Entry>
+                    <Button Text="Save"
+                            Margin="0,10,0,0"
+                            HorizontalOptions="End"
+                            Command="{Binding SaveStudentCommand}" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:BluetoothAttendanceSystem.ViewModels"
+             xmlns:triggers="clr-namespace:BluetoothAttendanceSystem.Triggers"
+             xmlns:converters="clr-namespace:BluetoothAttendanceSystem.Converters"
+             xmlns:models="clr-namespace:BluetoothAttendanceSystem.Models"
+             x:Class="BluetoothAttendanceSystem.Pages.AddNewViewClassPage"
+             x:DataType="viewmodels:AddNewViewClassPageViewModel"
+             BackgroundColor="#F1F1F1"
+             Title="Add New Class">
+
+    <ContentPage.Resources>
+        <Style x:Key="InvalidEntryStyle"
+               TargetType="Entry">
+            <Setter Property="BackgroundColor"
+                    Value="LightPink" />
+        </Style>
+        <Style x:Key="ValidEntryStyle"
+               TargetType="Entry">
+            <Setter Property="TextColor"
+                    Value="Black" />
+        </Style>
+        <ResourceDictionary>
+            <converters:FirstLetterConverter x:Key="FirstLetterConverter" />
+            <converters:FullClassNameConverter x:Key="FullClassNameConverter" />
+            <converters:NegationConverter x:Key="NegationConverter" />
+            <converters:ClassSubjectParameterConverter x:Key="ClassSubjectParameterConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <Grid>
+            <VerticalStackLayout>
+                <Frame Margin="10,10,10,0">
+                    <VerticalStackLayout>
+                        <Label Text="Reminder:"
+                               VerticalOptions="Start"
+                               HorizontalOptions="Start"
+                               FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                               FontAttributes="Bold"
+                               SemanticProperties.Description="Reminder" />
+                        <Label Text="Tap Import Class a modal will appear, Select Subject and Browse the Excel file to import students. After the student was added successfully a list will appear. Tapping one item in the list will navigate you to View Class Page where you can manage the information of each student. You can swipe Left to DELETE Class and Swipe Right to ADD SUBJECT to Current Class. Enjoy using BLATSY."
+                               HorizontalOptions="Start"
+                               FontSize="{OnPlatform WinUI=Small, Android=Small }"
+                               FontAttributes="None"
+                               SemanticProperties.Description="Reminder on how to use the application properly." />
+                    </VerticalStackLayout>
+                </Frame>
+                <!-- Import from Excel File-->
+                <Frame Margin="10,10,10,5">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding AddingNewClassActiveCommand}" />
+                    </Frame.GestureRecognizers>
+                    <Grid ColumnDefinitions=".2*,.8*">
+                        <Image Source="export_student.png"
+                               Grid.Column="0"
+                               HeightRequest="50"
+                               WidthRequest="50" />
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Import Class from Excel File"
+                                   VerticalOptions="Start"
+                                   HorizontalOptions="Start"
+                                   FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                                   FontAttributes="Bold" />
+                            <Label Text="Tap this section to add new Class by Importing from Excel file."
+                                   VerticalOptions="Start"
+                                   HorizontalOptions="Start"
+                                   FontSize="{OnPlatform WinUI=Micro, Android=Small}"
+                                   FontAttributes="None" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Frame>
+                <CollectionView x:Name="collectionView"
+                                SelectionMode="Single"
+                                Margin="10,5,10,0"
+                                SelectedItem="{Binding SelectedClass, Mode=TwoWay}"
+                                ItemsSource="{Binding Students}"
+                                EmptyView="The Class List is Empty">
+                    <CollectionView.Header>
+                        <VerticalStackLayout Background="#3b82f6"
+                                             Padding="5"
+                                             Margin="0,0,0,5">
+                            <Label Text="Class List"
+                                   HorizontalOptions="Center"
+                                   FontSize="Small"
+                                   FontAttributes="Bold" />
+                        </VerticalStackLayout>
+                    </CollectionView.Header>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:StudentSubjectModel">
+                            <SwipeView>
+                                <SwipeView.RightItems>
+                                    <SwipeItems>
+                                        <SwipeItem Text="Delete"
+                                                   BackgroundColor="Red"
+                                                   Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:AddNewViewClassPageViewModel}}, Path=DeleteClassCommand}"
+                                                   CommandParameter="{Binding}">
+                                        </SwipeItem>
+                                    </SwipeItems>
+                                </SwipeView.RightItems>
+                                <SwipeView.LeftItems>
+                                    <SwipeItem Text="Add Subject"
+                                               BackgroundColor="#3b82f6"
+                                               Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:AddNewViewClassPageViewModel}}, Path=AddingNewSubjectToClassActiveCommand}"
+                                               CommandParameter="{Binding}">
+                                    </SwipeItem>
+                                </SwipeView.LeftItems>
+                                <Border StrokeShape="RoundRectangle 5"
+                                        StrokeThickness="1"
+                                        Stroke="LightGray"
+                                        Padding="5"
+                                        Margin="0,0,0,5">
+                                    <Grid ColumnDefinitions=".2*, .8*">
+                                        <Frame Grid.Column="0"
+                                               Grid.Row="0"
+                                               BackgroundColor="#3b82f6"
+                                               CornerRadius="25"
+                                               HeightRequest="50"
+                                               WidthRequest="50"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="Center">
+                                        </Frame>
+                                        <Label Text="{Binding CourseAbbreviation, Converter={StaticResource FirstLetterConverter}}"
+                                               FontAttributes="Bold"
+                                               FontSize="Large"
+                                               TextColor="Black"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center" />
+                                        <VerticalStackLayout Grid.Column="1">
+                                            <Label FontSize="Medium">
+                                                <Label.Text>
+                                                    <MultiBinding Converter="{StaticResource FullClassNameConverter}">
+                                                        <Binding Path="CourseAbbreviation" />
+                                                        <Binding Path="Year" />
+                                                        <Binding Path="Section" />
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+                                            <Label Text="{Binding Subject}"
+                                                   FontSize="Small" />
+                                            <Label Text="{Binding SubjectCode}"
+                                                   FontSize="Small" />
+                                            <Label Text="{Binding FullCourseName}"
+                                                   FontSize="Small" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </SwipeView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+
+
+            <!-- Add New Class Modal-->
+            <BoxView BackgroundColor="Black"
+                     Opacity=".5"
+                     IsVisible="{Binding IsAddingNewClass}"
+                     ZIndex="100">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddingNewClassInActiveCommand}" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+
+            <Border IsVisible="False"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Start"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=Gray}"
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="1"
+                    Stroke="Black"
+                    WidthRequest="300"
+                    Padding="10"
+                    ZIndex="100">
+                <Border.Shadow>
+                    <Shadow Brush="LightSlateGray"
+                            Offset="5,3"
+                            Opacity=".5" />
+                </Border.Shadow>
+                <Border.Triggers>
+                    <DataTrigger TargetType="Border"
+                                 Binding="{Binding IsAddingNewClass}"
+                                 Value="True">
+                        <DataTrigger.EnterActions>
+                            <triggers:ShowOverlayTriggerAction ShowOverlay="True" />
+                        </DataTrigger.EnterActions>
+                        <DataTrigger.ExitActions>
+                            <triggers:ShowOverlayTriggerAction ShowOverlay="False" />
+                        </DataTrigger.ExitActions>
+                        <Setter Property="IsVisible"
+                                Value="True" />
+                    </DataTrigger>
+                </Border.Triggers>
+                <VerticalStackLayout>
+                    <Label Text="Import Class from Excel"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           Margin="0,0,0,20"
+                           HorizontalOptions="Center" />
+                    <Label Text="Select Subject*"
+                           x:Name="SelectSubject"
+                           FontAttributes="Bold" />
+                    <Picker ItemsSource="{Binding AllSubjects}"
+                            SelectedItem="{Binding SelectedSubject}"
+                            SemanticProperties.Description="{Binding Text, Source={x:Reference SelectSubject}}"
+                            SemanticProperties.Hint="Picker containing all subjects. This is required field">
+                    </Picker>
+
+                    <Label Text="{Binding ExcelFullPath}"
+                           x:Name="EnterSubjectCode"
+                           FontAttributes="None" />
+                    <Button Text="Browse Excel File"
+                            Margin="0,10,0,0"
+                            HorizontalOptions="CenterAndExpand"
+                            Command="{Binding PickExcelCommand}" />
+
+                    <Label Text="{Binding AddingStudent}"
+                           TextColor="Blue">
+
+                    </Label>
+                    <Button Text="Save Class"
+                            Margin="0,10,0,0"
+                            HorizontalOptions="End"
+                            Command="{Binding SaveClassCommand}"
+                            InputTransparent="{Binding IsButtonClickable, Converter={StaticResource NegationConverter}}" />
+                </VerticalStackLayout>
+            </Border>
+
+
+            <!-- Add New Subject to this Class Modal-->
+            <BoxView BackgroundColor="Black"
+                     Opacity=".5"
+                     IsVisible="{Binding IsAddingNewSubjectToClass}"
+                     ZIndex="200">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddingNewSubjectToClassInActiveCommand}" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+
+            <Border IsVisible="False"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Start"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=Gray}"
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="1"
+                    Stroke="Black"
+                    WidthRequest="300"
+                    Padding="10"
+                    ZIndex="200">
+                <Border.Shadow>
+                    <Shadow Brush="LightSlateGray"
+                            Offset="5,3"
+                            Opacity=".5" />
+                </Border.Shadow>
+                <Border.Triggers>
+                    <DataTrigger TargetType="Border"
+                                 Binding="{Binding IsAddingNewSubjectToClass}"
+                                 Value="True">
+                        <DataTrigger.EnterActions>
+                            <triggers:ShowOverlayTriggerAction ShowOverlay="True" />
+                        </DataTrigger.EnterActions>
+                        <DataTrigger.ExitActions>
+                            <triggers:ShowOverlayTriggerAction ShowOverlay="False" />
+                        </DataTrigger.ExitActions>
+                        <Setter Property="IsVisible"
+                                Value="True" />
+                    </DataTrigger>
+                </Border.Triggers>
+                <VerticalStackLayout>
+                    <Label Text="Add New Subject to Class"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           Margin="0,0,0,20"
+                           HorizontalOptions="Center" />
+                    <Label Text="Current Class*"
+                           x:Name="CurrentClass"
+                           FontAttributes="Bold" />
+                    <Label FontSize="Medium">
+                        <Label.Text>
+                            <MultiBinding Converter="{StaticResource FullClassNameConverter}">
+                                <Binding Path="CourseAbb" />
+                                <Binding Path="CourseYear" />
+                                <Binding Path="CourseSection" />
+                            </MultiBinding>
+                        </Label.Text>
+                    </Label>
+                    <Label Text="{Binding FullCourse}"
+                           FontSize="Small" />
+                    <Label Text="Select Subject*"
+                           Margin="0,5,0,0"
+                           x:Name="SelectedAddSubject"
+                           FontAttributes="Bold" />
+                    <Picker ItemsSource="{Binding AllSubjects}"
+                            SelectedItem="{Binding SelectedAddSubject}"
+                            SemanticProperties.Description="{Binding Text, Source={x:Reference SelectedAddSubject}}"
+                            SemanticProperties.Hint="Picker containing all subjects. This is required field">
+                    </Picker>
+                    <Button Text="Save Class"
+                            Margin="0,10,0,0"
+                            HorizontalOptions="End"
+                            Command="{Binding AddSubjectToExistingClassCommand}"
+                            InputTransparent="{Binding IsButtonClickable, Converter={StaticResource NegationConverter}}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Activity Indicator Overlay -->
+            <BoxView BackgroundColor="Black"
+                     Opacity=".5"
+                     IsVisible="{Binding IsImportRunning}"
+                     ZIndex="300">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+
+            <ActivityIndicator IsRunning="{Binding IsImportRunning}"
+                               IsVisible="{Binding IsImportRunning}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Start"
+                               HeightRequest="100"
+                               WidthRequest="100"
+                               Color="#3b82f6"
+                               ZIndex="300"/>
+        </Grid>
+    </ScrollView>
+</ContentPage>

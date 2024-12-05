@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:BluetoothAttendanceSystem.ViewModels"
+             xmlns:models="clr-namespace:BluetoothAttendanceSystem.Models"
+             xmlns:converters="clr-namespace:BluetoothAttendanceSystem.Converters"
+             x:Class="BluetoothAttendanceSystem.Pages.BlatsyPage"
+             x:DataType="viewmodels:BlatsyPageViewModel"
+             BackgroundColor="#F1F1F1"
+             Title="Blatsy">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:FirstLetterConverter x:Key="FirstLetterConverter" />
+            <converters:FullClassNameConverter x:Key="FullClassNameConverter" />
+            <converters:NegationConverter x:Key="NegationConverter" />
+            <converters:FullStudentNameConverter x:Key="FullStudentNameConverter" />
+            <converters:GenderBackgroundColorConverter x:Key="GenderBackgroundColorConverter" />
+            <converters:IsPresentColorConverter x:Key="IsPresentColorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ScrollView>
+        <Grid ColumnDefinitions="*"
+              RowDefinitions="Auto,Auto">
+            <VerticalStackLayout Grid.Row="0">
+                <Frame Margin="10,10,10,0">
+                    <VerticalStackLayout>
+                        <Label Text="Reminder:"
+                               VerticalOptions="Start"
+                               HorizontalOptions="Start"
+                               FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                               FontAttributes="Bold"
+                               SemanticProperties.Description="Reminder" />
+                        <Label Text="Once you press the Check Attendance button, the student's attendance will be saved automatically. The list of students with a GREEN border indicates PRESENT, while RED indicates ABSENT. You can tap on each list to mark student's existence manually. If you leave this page after the attendance is done, you cannot edit the attendance here. You can go to the ATTENDANCE Tab to make necessary corrections."
+                               VerticalOptions="Start"
+                               HorizontalOptions="Start"
+                               FontSize="{OnPlatform WinUI=Small, Android=Small }"
+                               FontAttributes="None"
+                               SemanticProperties.Description="Reminder on how to use the application properly." />
+                    </VerticalStackLayout>
+                </Frame>
+                <VerticalStackLayout Margin="10,10">
+                    <Label Text="Choose Scan Duration:"
+                           VerticalOptions="Start"
+                           HorizontalOptions="Start"
+                           FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                           FontAttributes="Bold"
+                           SemanticProperties.Description="Reminder" />
+                    <Picker ItemsSource="{Binding ScanDuration}"
+                            SelectedItem="{Binding SelectedScanDuration}"
+                            FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                            SemanticProperties.Description="{Binding Text, Source={x:Reference SelectedAddSubject}}"
+                            SemanticProperties.Hint="Picker containing all subjects. This is required field">
+                    </Picker>
+                    <Button Text="Check Attendance"
+                            FontSize="Large"
+                            HorizontalOptions="FillAndExpand"
+                            Margin="0,10,0,0"
+                            Command="{Binding StartBlatsyCommand}" />
+
+                    <!--<Button Text="Check Attendace"
+                            FontSize="Large"
+                            HorizontalOptions="FillAndExpand"
+                            Margin="10,10"
+                            Command="{Binding DisplayDetectedDeviceCommand}" />-->
+                </VerticalStackLayout>
+                <Frame Margin="10,0,10,5">
+                    <Grid ColumnDefinitions=".5*,.5*">
+                        <StackLayout Grid.Column="0">
+                            <Label Text="Subject:"
+                                   VerticalOptions="Start"
+                                   HorizontalOptions="Start"
+                                   FontSize="{OnPlatform WinUI=Small, Android=Small }"
+                                   FontAttributes="Bold" />
+
+                            <Label Text="{Binding Subject}"
+                                   VerticalOptions="Start"
+                                   HorizontalOptions="Start"
+                                   FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                                   FontAttributes="Bold" />
+
+                            <Label Text="{Binding SubjectCode}"
+                                   VerticalOptions="Start"
+                                   HorizontalOptions="Start"
+                                   FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                                   FontAttributes="Bold" />
+                        </StackLayout>
+                        <StackLayout Grid.Column="1">
+                            <VerticalStackLayout>
+                                <HorizontalStackLayout>
+                                    <Label Text="Total Males: "
+                                           VerticalOptions="Start"
+                                           HorizontalOptions="Start"
+                                           FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                                           FontAttributes="None" />
+                                    <Label Text="{Binding TotalMales}"
+                                           VerticalOptions="Start"
+                                           HorizontalOptions="Start"
+                                           FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                                           FontAttributes="Bold" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout>
+                                    <Label Text="Total Females: "
+                                           VerticalOptions="Start"
+                                           HorizontalOptions="Start"
+                                           FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                                           FontAttributes="None" />
+                                    <Label Text="{Binding TotalFemales}"
+                                           VerticalOptions="Start"
+                                           HorizontalOptions="Start"
+                                           FontSize="{OnPlatform WinUI=Small, Android=Medium }"
+                                           FontAttributes="Bold" />
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </StackLayout>
+                    </Grid>
+                </Frame>
+                <CollectionView x:Name="studentCollectionView"
+                                Grid.Row="1"
+                                SelectionMode="Single"
+                                SelectedItem="{Binding SelectedStudent, Mode=TwoWay}"
+                                ItemsSource="{Binding Students}"
+                                Margin="10,5,10,0"
+                                EmptyView="The Student List is Empty">
+                    <CollectionView.Header>
+                        <VerticalStackLayout Background="#3b82f6"
+                                             Padding="5"
+                                             Margin="0,0,0,5">
+                            <Label Text="Student List"
+                                   HorizontalOptions="Center"
+                                   TextColor="White"
+                                   FontSize="Medium"
+                                   FontAttributes="Bold" />
+                        </VerticalStackLayout>
+                    </CollectionView.Header>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Student">
+                            <Border StrokeShape="RoundRectangle 5"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding IsPresent, Converter={StaticResource IsPresentColorConverter}}"
+                                    Padding="5"
+                                    Margin="0,0,0,5">
+                                <Grid ColumnDefinitions=".2*, .8*">
+                                    <Frame Grid.Column="0"
+                                           Grid.Row="0"
+                                           BackgroundColor="{Binding Gender, Converter={StaticResource GenderBackgroundColorConverter}}"
+                                           CornerRadius="25"
+                                           HeightRequest="50"
+                                           WidthRequest="50"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center">
+                                    </Frame>
+                                    <Label Text="{Binding Surname, Converter={StaticResource FirstLetterConverter}}"
+                                           FontAttributes="Bold"
+                                           FontSize="Large"
+                                           TextColor="Black"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalTextAlignment="Center" />
+                                    <VerticalStackLayout Grid.Column="1">
+                                        <Label FontSize="Medium">
+                                            <Label.Text>
+                                                <MultiBinding Converter="{StaticResource FullStudentNameConverter}">
+                                                    <Binding Path="Surname" />
+                                                    <Binding Path="Firstname" />
+                                                    <Binding Path="Middlename" />
+                                                </MultiBinding>
+                                            </Label.Text>
+                                        </Label>
+                                        <Label FontSize="Small">
+                                            <Label.Text>
+                                                <MultiBinding Converter="{StaticResource FullClassNameConverter}">
+                                                    <Binding Path="CourseAbbreviation" />
+                                                    <Binding Path="Year" />
+                                                    <Binding Path="Section" />
+                                                </MultiBinding>
+                                            </Label.Text>
+                                        </Label>
+                                        <Label Text="{Binding FullCourseName}"
+                                               FontSize="Small" />
+                                        <Label Text="{Binding BluetoothMACAddress}"
+                                               FontSize="Small" />
+                                        <!--<Label Text="{Binding BluetoothGUID}"
+                                               FontSize="Small" />-->
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+
+            <!-- Add New / Edit Student Overlay Overlay -->
+            <BoxView BackgroundColor="Black"
+                     Opacity=".5"
+                     IsVisible="{Binding IsCheckingAttendance}">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+
+            <ActivityIndicator IsRunning="{Binding IsCheckingAttendance}"
+                               IsVisible="{Binding IsCheckingAttendance}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Start"
+                               HeightRequest="100"
+                               WidthRequest="100"
+                               Color="#3b82f6" />
+        </Grid>
+    </ScrollView>
+</ContentPage>

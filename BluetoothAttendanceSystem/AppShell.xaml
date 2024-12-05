@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell x:Class="BluetoothAttendanceSystem.AppShell"
+       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:pages="clr-namespace:BluetoothAttendanceSystem.Pages"
+       xmlns:viewmodels="clr-namespace:BluetoothAttendanceSystem.ViewModels"
+       x:DataType="viewmodels:AppShellViewModel"
+       Shell.TabBarIsVisible="True"
+       Shell.TabBarBackgroundColor="#3b82f6"
+       Shell.TabBarUnselectedColor="White"
+       Shell.TabBarForegroundColor="Black"
+       Shell.TabBarTitleColor="Black"
+       Title="Blatsy">
+
+    <!--<ShellContent
+        ContentTemplate="{DataTemplate pages:MainAppPage}" />-->
+    
+    <TabBar>
+        <Tab Title="Main"
+             Icon="home_nav.png">
+            <ShellContent ContentTemplate="{DataTemplate pages:MainAppPage}" />
+        </Tab>
+        <Tab Title="Administration"
+             Icon="account_circle.png">
+            <ShellContent ContentTemplate="{DataTemplate pages:AdministrationPage}" />
+        </Tab>
+        <Tab Title="Blatsy"
+             Icon="bluetooth.png">
+            <ShellContent ContentTemplate="{DataTemplate pages:BlatsyHomePage}" />
+        </Tab>
+        <Tab Title="Attendance"
+             Icon="attendance.png">
+            <ShellContent ContentTemplate="{DataTemplate pages:AttendanceHomePage}" />
+        </Tab>
+    </TabBar>
+
+</Shell>
