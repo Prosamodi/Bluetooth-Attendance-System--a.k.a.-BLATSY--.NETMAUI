@@ -29,7 +29,7 @@ Quickly add student information by importing data using a BLATSY-provided Excel 
 Export attendance records to Excel for safekeeping, analysis, or printing.
 
 **Database Management (CRUD Operations)** <br/>
-Manage all aspects of attendance data, including:
+Manage all aspects of attendance data, including: <br>
 ○ Adding new students. <br/>
 ○ Creating and managing subjects. <br/>
 ○ Assigning classes to subjects. <br/>
